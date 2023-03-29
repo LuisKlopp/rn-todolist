@@ -22,12 +22,13 @@ import {
   View,
 } from 'react-native';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+export interface TodoType {
+  id: string;
+  content: string;
+}
 
 function App(): JSX.Element {
-  const [todos, setTodos] = useState<{id: string; content: string}[]>([]);
+  const [todos, setTodos] = useState<TodoType[]>([]);
   const [inputs, setInputs] = useState<string>('');
 
   const onChangeText = (
@@ -58,7 +59,13 @@ function App(): JSX.Element {
       </View>
       <View>
         {todos.map(todo => (
-          <TodoItem key={todo.id} content={todo.content} />
+          <TodoItem
+            key={todo.id}
+            content={todo.content}
+            id={todo.id}
+            todos={todos}
+            setTodos={setTodos}
+          />
         ))}
       </View>
     </SafeAreaView>
