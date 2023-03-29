@@ -7,6 +7,7 @@
 
 import React, {useState} from 'react';
 import type {PropsWithChildren} from 'react';
+import TodoItem from './src/components/TodoItem';
 import {
   NativeSyntheticEvent,
   SafeAreaView,
@@ -57,7 +58,7 @@ function App(): JSX.Element {
       </View>
       <View>
         {todos.map(todo => (
-          <Text key={todo.id}>{todo.content}</Text>
+          <TodoItem key={todo.id} content={todo.content} />
         ))}
       </View>
     </SafeAreaView>
