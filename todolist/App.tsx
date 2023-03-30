@@ -43,26 +43,30 @@ function App(): JSX.Element {
     });
   };
 
+  const handleResetInput = (): void => {
+    setTodoItem({id: '', content: ''});
+  };
+
   const addTodo = (data: TodoType): void => {
     if (data.id) {
       const updatedTodos = todos.map(todo =>
         todo.id === data.id ? {...todo, content: data.content} : todo,
       );
       setTodos(updatedTodos);
-      setTodoItem({id: '', content: ''});
+      handleResetInput();
       return;
     }
     setTodos([
       ...todos,
       {id: Date.now().toString(), content: todoItem.content},
     ]);
-    setTodoItem({id: '', content: ''});
+    handleResetInput();
   };
 
   const deleteTodo = (todoId: string): void => {
     const deleteItem = todos.filter(todo => todo.id !== todoId);
     setTodos(deleteItem);
-    setTodoItem({id: '', content: ''});
+    handleResetInput();
   };
 
   const editTodo = (todoId: string): void => {
@@ -92,19 +96,24 @@ function App(): JSX.Element {
             style={{
               justifyContent: 'center',
               flexDirection: 'row',
+              marginTop: 10,
             }}>
             <Pressable onPress={() => editTodo(todo.id)}>
-              <Text style={{fontSize: 18}}>{todo.content}</Text>
+              <Text style={{fontSize: 22, color: 'black'}}>{todo.content}</Text>
             </Pressable>
             <Pressable
               onPress={() => deleteTodo(todo.id)}
               style={{
-                height: 20,
+                height: 30,
+                alignItems: 'center',
                 justifyContent: 'center',
+                backgroundColor: '#5555FF',
+                width: 30,
+                borderRadius: 50,
                 position: 'absolute',
-                right: 13,
+                right: 20,
               }}>
-              <Text>X</Text>
+              <Text style={{color: 'white', fontWeight: '600'}}>X</Text>
             </Pressable>
           </View>
         ))}
