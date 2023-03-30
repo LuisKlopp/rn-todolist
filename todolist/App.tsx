@@ -7,9 +7,9 @@
 
 import React, {useState} from 'react';
 import type {PropsWithChildren} from 'react';
-import TodoItem from './src/components/TodoItem';
 import {
   NativeSyntheticEvent,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -29,17 +29,45 @@ export interface TodoType {
 
 function App(): JSX.Element {
   const [todos, setTodos] = useState<TodoType[]>([]);
-  const [inputs, setInputs] = useState<string>('');
+  const [todoItem, setTodoItem] = useState<TodoType>({
+    id: '',
+    content: '',
+  });
 
   const onChangeText = (
     e: NativeSyntheticEvent<TextInputChangeEventData>,
   ): void => {
-    setInputs(e.nativeEvent.text);
-    console.log(inputs);
+    setTodoItem({
+      ...todoItem,
+      content: e.nativeEvent.text,
+    });
   };
 
-  const addTodo = (): void => {
-    setTodos([...todos, {id: Date.now().toString(), content: inputs}]);
+  const addTodo = (data: TodoType): void => {
+    if (data.id) {
+      const updatedTodos = todos.map(todo =>
+        todo.id === data.id ? {...todo, content: data.content} : todo,
+      );
+      setTodos(updatedTodos);
+      setTodoItem({id: '', content: ''});
+      return;
+    }
+    setTodos([
+      ...todos,
+      {id: Date.now().toString(), content: todoItem.content},
+    ]);
+    setTodoItem({id: '', content: ''});
+  };
+
+  const deleteTodo = (todoId: string): void => {
+    const deleteItem = todos.filter(todo => todo.id !== todoId);
+    setTodos(deleteItem);
+    setTodoItem({id: '', content: ''});
+  };
+
+  const editTodo = (todoId: string): void => {
+    const editItem = todos.filter(todo => todo.id === todoId);
+    setTodoItem({id: editItem[0].id, content: editItem[0].content});
   };
 
   return (
@@ -52,20 +80,33 @@ function App(): JSX.Element {
           placeholder="할일을 입력해주세요."
           style={styles.input}
           onChange={onChangeText}
-          value={inputs}
-          onSubmitEditing={addTodo}
+          value={todoItem.content}
+          onSubmitEditing={() => addTodo(todoItem)}
           returnKeyType="done"
         />
       </View>
       <View>
         {todos.map(todo => (
-          <TodoItem
+          <View
             key={todo.id}
-            content={todo.content}
-            id={todo.id}
-            todos={todos}
-            setTodos={setTodos}
-          />
+            style={{
+              justifyContent: 'center',
+              flexDirection: 'row',
+            }}>
+            <Pressable onPress={() => editTodo(todo.id)}>
+              <Text style={{fontSize: 18}}>{todo.content}</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => deleteTodo(todo.id)}
+              style={{
+                height: 20,
+                justifyContent: 'center',
+                position: 'absolute',
+                right: 13,
+              }}>
+              <Text>X</Text>
+            </Pressable>
+          </View>
         ))}
       </View>
     </SafeAreaView>
